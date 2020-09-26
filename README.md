@@ -162,8 +162,7 @@ Now make the first request:
 
 ```
 $ curl -d '{"hello":"world"}' -H 'content-type: application/json' localhost:5000/song
-JSON payload failed validation. Missing key: id. Expected keys are: ('id', 'title', 'youtube_url', 'shape')
+JSON payload failed validation. Missing key: title. Expected keys are: ('title', 'youtube_url', 'shape')
 ```
 
 You should see the above message as a 400-status response when posting json with curl. The API is working.
-
