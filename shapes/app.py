@@ -15,17 +15,17 @@ mallow = Marshmallow(app)
 class Song(db.Model):
     id = db.Column(db.Integer,primary_key=True, autoincrement=True)
     title = db.Column(db.String)
-    youtube_url = db.Column(db.String)
+    youtube_id = db.Column(db.String)
     shape = db.Column(db.String)
     
-    def __init__(self, title, youtube_url, shape):
+    def __init__(self, title, youtube_id, shape):
         self.title = title
-        self.youtube_url = youtube_url
+        self.youtube_id = youtube_id
         self.shape = shape
         
 class SongSchema(mallow.Schema):
     class Meta:
-        fields = ('id','title','youtube_url','shape')
+        fields = ('id','title','youtube_id','shape')
 
 # Initialize schemas
 song_schema = SongSchema()
