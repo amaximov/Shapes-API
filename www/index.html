@@ -6,15 +6,16 @@
     <script>
       initSqlJs().then(function(SQL){
 	  var xhr = new XMLHttpRequest();
-	  // For example: https://github.com/lerocha/chinook-database/raw/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite
 	  xhr.open('GET', 'shapes.sqlite', true);
 	  xhr.responseType = 'arraybuffer';
 	  
 	  xhr.onload = function(e) {
 	      var uInt8Array = new Uint8Array(xhr.response);
 	      var db = new SQL.Database(uInt8Array);
-	      var contents = db.exec("SELECT * FROM song");
-	      console.log(contents)
+	      stmt = db.prepare("SELECT * FROM song");
+	      while(stmt.step()){
+		  console.log(stmt.getAsObject());
+	      }
 	  }
 	  xhr.send();
       })
