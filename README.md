@@ -26,6 +26,8 @@ application.
 
 ### shapes
 
+the directory containing python application files (a python "module").
+
 ## Goals
 
 The main goal of this application is to be as simple to understand and maintain, and as clean
@@ -39,7 +41,9 @@ https://tutorialwithproject.com/flask-rest-api-crud-operations/#define_and_initi
 
 Jagadananda Saint's tutorial on a simple Flask REST API that does "CRUD" (Create/Read/Update/Delete)
 
+https://flask.palletsprojects.com/en/1.1.x/tutorial/layout/
 
+The flask tutorial on how to set up your app initially
 
 ## Technology Choices
 
