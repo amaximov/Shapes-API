@@ -121,4 +121,13 @@ your server running.
 source venv/bin/activate
 ```
 
-Your prompt should change now.
+Your prompt should change now, indicating that you're "in" a virtualenv. This means that you're
+using a python binary that's local to the virtual environment, along with a set of libraries that's
+installed below the `venv` directory. If you make a mistake you can always delete and re-initialize
+the virtual environment.
+
+Next, install libraries from the "requirements.txt" file.
+
+```
+pip install -r requirements.txt
+```
