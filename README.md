@@ -1,6 +1,6 @@
 # Shapes Demo App
 
-##Architecture
+## Architecture
 
 This is a simple framework for a single page javascript application that can be served completely 
 as static files. The architecture is such that the entire application is encapsulated in as few 
@@ -14,17 +14,17 @@ The goal is to make a full featured web application that is also fully archivabl
 clear set of static files, so that a point-in-time snapshot is always a complete version of the
 application.
 
-##The Files
+## The Files
 
-###index.html
+### index.html
 
-###app.css
+### app.css
 
-###app.js
+### app.js
 
-###data.sqlite
+### data.sqlite
 
-###shapes
+### shapes
 
 ## Goals
 
