@@ -16,17 +16,33 @@ application.
 
 ## The Files
 
-### index.html
+### www
 
-### app.css
+the directory that contains all files that should be available to the public internet
 
-### app.js
+### www/index.html
 
-### data.sqlite
+the html file that bootstraps the shapes application
+
+### www/app.css
+
+CSS that styles the shapes application
+
+### www/app.js
+
+the javascript code that renders and runs the shapes application
+
+### www/shapes.sqlite
+
+the sqlite data file that is used by the API for _writing_ and by the html/javascript file for _reading_
 
 ### shapes
 
 the directory containing python application files (a python "module").
+
+### conf
+
+the directory containing apache24 configuration file
 
 ## Goals
 
@@ -150,3 +166,4 @@ JSON payload failed validation. Missing key: id. Expected keys are: ('id', 'titl
 ```
 
 You should see the above message as a 400-status response when posting json with curl. The API is working.
+
