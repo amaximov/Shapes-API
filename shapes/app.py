@@ -29,3 +29,22 @@ class SongSchema(mallow.Schema):
 # Initialize schemas
 song_schema = SongSchema()
 songs_schema = SongSchema(many=True)
+
+# Create a user
+@app.route('/song', methods=['POST'])
+def add_song():
+    # simple validation. compare each key in the schema with the keys we received in json post
+    for key in SongSchema.Meta.fields:
+        if key not in request.json:
+            raise Exception('JSON payload failed validation. Missing key: %s' % key)
+    # simple validation. compare the length of the keys in the schema to the length of the
+    # set of keys we received in json post.
+    if len(SongSchema.Meta.fields) != len(request.json):
+        raise Exception("JSON payload faled validation. Too many keys. (extraneous data?)")
+
+    # use the "double star" operator to save some typing. Passes in the 
+    # dictionary keys and values as arguments to the function (in this case, a constructor)
+    new_song = Song(**request.json)
+    db.session.add(new_song)
+    db.session.commit()
+    return song_schema.jsonify(new_song)
