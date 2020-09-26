@@ -36,11 +36,11 @@ def add_song():
     # simple validation. compare each key in the schema with the keys we received in json post
     for key in SongSchema.Meta.fields:
         if key not in request.json:
-            raise Exception('JSON payload failed validation. Missing key: %s' % key)
+            return 'JSON payload failed validation. Missing key: %s. Expected keys are: %s\n' % (key, SongSchema.Meta.fields), 400
     # simple validation. compare the length of the keys in the schema to the length of the
     # set of keys we received in json post.
     if len(SongSchema.Meta.fields) != len(request.json):
-        raise Exception("JSON payload faled validation. Too many keys. (extraneous data?)")
+        return "JSON payload faled validation. Too many keys. (extraneous data?) Expected keys are: %s\n" % (SongSchema.Meta.fields,), 400
 
     # use the "double star" operator to save some typing. Passes in the 
     # dictionary keys and values as arguments to the function (in this case, a constructor)
