@@ -88,3 +88,37 @@ allows you to access a sqlite database (directly) in the browser
 
 
 
+### Starting the Server
+
+These are "simple" instructions on setting up a python "virtual environment" -- a small
+virtualized installation of python that's local to your current project. This represents
+a special, discardable (deletable) way to test out libraries for your project that don't
+get installed globally (so annoying!). It's a good practice to use virtual environments
+so you can easily reproduce the python environment from machine to machine.
+
+Python comes with a package manager called "pip" (it doesn't quite "come with" it but
+it's the usual default). Pip is used to install packages from a repo called pypi (https://pypi.org).
+Pip and Pypi are nice, stable places where code kind of lives to be installed as a library.
+
+If you've never used your python environment before, you should install virtualenv globally before
+you begin, and install pip globally (because it should really be global).
+
+```
+sudo easy_install pip
+sudo pip install virtualenv
+```
+
+Now make a virtual environment.
+
+```
+virtualenv -p python3 venv
+```
+
+Now activate your virtual environment. This is something you'll need to do each time to get
+your server running.
+
+```
+source venv/bin/activate
+```
+
+Your prompt should change now.
