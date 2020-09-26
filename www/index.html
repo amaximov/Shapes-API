@@ -4,13 +4,7 @@
     <script src="app.js"></script>
     <script src="sql-wasm.js"></script>
     <script>
-        config = {
-	    locateFile: (filename, prefix) => {
-		console.log(`prefix is : ${prefix}`);
-		return `./${filename}`;
-	    }
-	}
-      initSqlJs(config).then(function (SQL) {
+      initSqlJs().then(function (SQL) {
 	  var db = new SQL.Database();
 	  db.run("CREATE TABLE test (col1, col2);");
 	  db.run("INSERT INTO test VALUES (?,?), (?,?)", [1, 111, 2, 222]);
