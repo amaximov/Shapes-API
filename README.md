@@ -33,6 +33,14 @@ and "manual-similar" as possble, meaning that it can be quickly be deconstructed
 coder and understood (at least substantially) by simply following manual examples. I will
 make a list of those sources from which I pulled instructions and documentation.
 
+### Sources
+ 
+https://tutorialwithproject.com/flask-rest-api-crud-operations/#define_and_initialize_marshmallow
+
+Jagadananda Saint's tutorial on a simple Flask REST API that does "CRUD" (Create/Read/Update/Delete)
+
+
+
 ## Technology Choices
 
 ### API Packages (python side)
