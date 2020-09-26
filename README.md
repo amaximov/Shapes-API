@@ -135,3 +135,9 @@ Next, install libraries from the "requirements.txt" file.
 ```
 pip install -r requirements.txt
 ```
+
+Now start the flask app
+
+```
+python shapes/app.py
+```
