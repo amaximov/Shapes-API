@@ -12,9 +12,16 @@
 	  xhr.onload = function(e) {
 	      var uInt8Array = new Uint8Array(xhr.response);
 	      var db = new SQL.Database(uInt8Array);
-	      stmt = db.prepare("SELECT * FROM song");
+	      var stmt = db.prepare("SELECT * FROM song");
+	      var template = document.getElementById("template.youtube");
 	      while(stmt.step()){
-		  console.log(stmt.getAsObject());
+		  var row = stmt.getAsObject();	
+		  var instance = template.cloneNode(true);
+		  instance.style.display = "block";
+		  var frame = instance.getElementsByTagName('iframe')[0];
+		  frame.setAttribute('src', "https://www.youtube.com/embed/" + row.youtube_id);
+		  var player = document.getElementById('player');
+		  player.appendChild(instance);
 	      }
 	  }
 	  xhr.send();
@@ -22,8 +29,16 @@
     </script>
   </head>
   <body>
-    <div id="player">
+    <div id="player" style='height:100%; width:100%;'>
     </div>
+
+    <div id='template.youtube' style='display:none; position: absolute; top:0; left:0; z-index:-1; height:100%; width:100%;'>
+      <iframe style='width:100%; height:100%;' src="" frameborder="0"
+	      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+	      allowfullscreen>
+      </iframe>
+    </div>
+    
     <button onclick="playNext()">Try Another</button>
     <button onclick="playPrevious()">Go Back</button>
   </body>
