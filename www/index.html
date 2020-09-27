@@ -12,7 +12,7 @@
 	  xhr.onload = function(e) {
 	      var uInt8Array = new Uint8Array(xhr.response);
 	      var db = new SQL.Database(uInt8Array);
-	      var stmt = db.prepare("SELECT * FROM song");
+	      var stmt = db.prepare("SELECT * FROM song ORDER BY RANDOM() LIMIT 1;");
 	      var template = document.getElementById("template.youtube");
 	      while(stmt.step()){
 		  var row = stmt.getAsObject();	

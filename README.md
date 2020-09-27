@@ -65,6 +65,12 @@ https://github.com/sql-js/sql.js
 
 SQL.js documentation. in particular: https://github.com/sql-js/sql.js/wiki/Load-a-database-from-the-server
 
+https://marshmallow.readthedocs.io/en/stable/quickstart.html#validation
+Marshmallow Schema documentation. I suspected this did validation for you, and added boilerplate
+from this so we didn't have to "repeat ourselves." (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
+
+We'll make more progress towards DRY as the code matures.
+
 ## Technology Choices
 
 ### API Packages (python side)
