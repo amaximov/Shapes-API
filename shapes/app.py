@@ -53,6 +53,11 @@ def add_song():
     db.session.commit()
     return song_schema.jsonify(new_song)
 
+@app.route('/song', methods=['GET'])
+def get_songs():
+    songs = Song.query.all()
+    return jsonify(songs_schema.dump(songs))                  #or you can write single line: jsonify(users_schema.dump(users))
+
 # this tricky little weirdness is python boilerplate for "if this file is executed directly, do [action]"
 # where "action" here, is to call the "run" function on the flask "app" (in debug mode)
 if __name__ == '__main__':
