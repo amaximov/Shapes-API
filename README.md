@@ -4,13 +4,13 @@
 
 This is a simple framework for a single page javascript application that can be served completely 
 as static files. The architecture is such that the entire application is encapsulated in as few 
-files, none of whichhave any "moving parts" -- or server-side componenets, as possible.
+files as possible, none of which have any "moving parts" -- or server-side componenets.
 
-However, there is also a server-side component -- an API that functions as a master SQLite file 
-update process. This API *is* a "moving part" -- it updates the SQLite file. The entire SQLite 
-file is refreshed on page load by the user.
+However, there is a separate server-side component -- an API that functions as a master SQLite file 
+update process. This API *is* a "moving part" -- it *writes* to the SQLite file. The entire SQLite 
+file is downloaded on page load by the user.
 
-The goal is to make a full featured web application that is also fully archivable as a small,
+The goal is to make a full-featured web application that is also fully archivable as a small,
 clear set of static files, so that a point-in-time snapshot is always a complete version of the
 application.
 
@@ -60,6 +60,10 @@ Jagadananda Saint's tutorial on a simple Flask REST API that does "CRUD" (Create
 https://flask.palletsprojects.com/en/1.1.x/tutorial/layout/
 
 The flask tutorial on how to set up your app initially
+
+https://github.com/sql-js/sql.js
+
+SQL.js documentation. in particular: https://github.com/sql-js/sql.js/wiki/Load-a-database-from-the-server
 
 ## Technology Choices
 
