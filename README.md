@@ -4,7 +4,7 @@
 
 This is a simple framework for a single page javascript application that can be served completely 
 as static files. The architecture is such that the entire application is encapsulated in as few 
-files, none of which have any "moving parts" -- or server-side componenets.
+files as possible, none of which have any "moving parts" -- or server-side componenets.
 
 However, there is a separate server-side component -- an API that functions as a master SQLite file 
 update process. This API *is* a "moving part" -- it *writes* to the SQLite file. The entire SQLite 
