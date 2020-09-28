@@ -22,6 +22,22 @@ mallow = Marshmallow(app)
 # 	"location" : "https://www.complex.com/music/best-new-music-this-week-brockhampton-vince-staples-lana-del-rey"
 # }
 
+class Source(Base):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_entity = db.Column(db.String)
+    parent_stream = db.Column(db.String)
+    instance_name = db.Column(db.String)
+    publication_date = db.Column(db.DateTime)
+    location = db.Column(db.String)
+
+class Artist(Base):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
+class Shape(Base):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+
 # Example of a Song document
 # {
 # 	"_id" : ObjectId("5eb0eb3d65bca35b26437f22"),
@@ -32,17 +48,18 @@ mallow = Marshmallow(app)
 # 	"videoId" : "rp-I-YGg6Hs"
 # }
 
-class Song(db.Model):
-    id = db.Column(db.Integer,primary_key=True, autoincrement=True)
+class Song(Base):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    capture_date = db.Column(db.DateTime)
+    capture_source = db.Column(db.Integer, foreign_key=Source)
+    artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id))
     title = db.Column(db.String)
-    youtube_id = db.Column(db.String)
-    shape = db.Column(db.String)
+    video_id = db.Column(db.String)
+    shape_id = db.Column(db.Integer, db.ForeignKey(Shape.id))
+
+    artist = relationship('Artist', foreign_keys='Song.artist_id')
+    shape = relationship('Shape', foreign_keys='Song.shape_id')
     
-    def __init__(self, title, youtube_id, shape):
-        self.title = title
-        self.youtube_id = youtube_id
-        self.shape = shape
-        
 class SongSchema(mallow.Schema):    
     class Meta:
         fields = ('id','title','youtube_id','shape')
