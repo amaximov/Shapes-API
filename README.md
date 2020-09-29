@@ -71,6 +71,15 @@ from this so we didn't have to "repeat ourselves." (https://en.wikipedia.org/wik
 
 We'll make more progress towards DRY as the code matures.
 
+https://stackoverflow.com/questions/18807322/sqlalchemy-foreign-key-relationship-attributes
+documentation on how to set up foreign key relationships for SQLAlchemy (via flask-sqlalchemy,
+a bridge library). The answer to this question has many good points that the CRUD tutorial's code
+overlooked.
+
+https://stackoverflow.com/questions/9692962/flask-sqlalchemy-import-context-issue/9695045#9695045
+documentation on how to move models into a separate file. Keeping all of the data modeling
+in the same place as the URL routing etc is confusing and bad form.
+
 ## Technology Choices
 
 ### API Packages (python side)
