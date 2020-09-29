@@ -80,6 +80,9 @@ https://stackoverflow.com/questions/9692962/flask-sqlalchemy-import-context-issu
 documentation on how to move models into a separate file. Keeping all of the data modeling
 in the same place as the URL routing etc is confusing and bad form.
 
+https://dev.to/djiit/documenting-your-flask-powered-api-like-a-boss-9eo
+tutorial on how to make your flask API (such as ours) "self-documenting"
+
 ## Technology Choices
 
 ### API Packages (python side)
