@@ -110,6 +110,10 @@ is rather complex and is the object of "serialization" [memory-to-string] and "d
 [string-to-memory]. It's called "serialization" because the bits/bytes of a string are 
 transmitted in "series")
 
+#### apispec
+Makes a "self-documenting" API -- producing a swagger.json which will be consumed
+by redoc to make a nice UI that documents how the API works (see below).
+
 ### Data storage
 
 #### SQLite
@@ -125,7 +129,10 @@ relatively quick and very reliable tool.
 #### SQL.js
 allows you to access a sqlite database (directly) in the browser
 
-
+#### ReDoc (https://github.com/Redocly/redoc)
+small, portable UI to transform swagger.json into a usable UI with example documents
+for the various API endpoints. One of the hard things about APIs is "What data am I 
+supposed to send?"
 
 ### Starting the Server
 
