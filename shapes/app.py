@@ -84,12 +84,12 @@ def get_songs():
     return jsonify(songs_schema.dump(songs))
 
 @app.route("/song/<int:song_id>", methods=['GET'])
-def update_song(song_id):
+def get_song(song_id):
     """Display Song
     ---
-    put:
+    get:
       summary: Display Song
-      description: Delete Song identified by <id>
+      description: Display Song identified by <id>
       parameters:
         - name: song_id
           in: path
@@ -109,8 +109,7 @@ def update_song(song_id):
         song = Song.query.get(song_id)
     except Exception as e:
         return "Object not found for ID %s", 400
-    db.session.commit()
-    return jsonify(song_schema.dumps(song))
+    return jsonify(song_schema.dump(song))
 
 @app.route("/song/<int:song_id>", methods=['PUT'])
 def update_song(song_id):
@@ -140,7 +139,7 @@ def update_song(song_id):
     except ValidationError as err:
         return err.messages, 400
     db.session.commit()
-    return jsonify(song_schema.dumps(song))
+    return jsonify(song_schema.dump(song))
 
 @app.route("/song/<int:song_id>", methods=['DELETE'])
 def delete_song(song_id):
@@ -164,11 +163,12 @@ def delete_song(song_id):
     song = Song.query.get(song_id)
     db.session.delete(song)
     db.session.commit()
-    return jsonify(song_schema.dumps(song))
+    return jsonify(song_schema.dump(song))
 
 with app.test_request_context():
     spec.path(view=add_song)
     spec.path(view=delete_song)
+    spec.path(view=get_song)
     spec.path(view=update_song)
     spec.path(view=get_songs)
 
