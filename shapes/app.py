@@ -83,7 +83,36 @@ def get_songs():
     songs = Song.query.all()
     return jsonify(songs_schema.dump(songs))
 
-@app.route("/song/<int:id>", methods=['PUT'])
+@app.route("/song/<int:song_id>", methods=['GET'])
+def update_song(song_id):
+    """Display Song
+    ---
+    put:
+      summary: Display Song
+      description: Delete Song identified by <id>
+      parameters:
+        - name: song_id
+          in: path
+          description: Song ID
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Song update succeeded
+          content:
+            application/json:
+              schema: SongSchema
+        404:
+          description: Song not found
+    """
+    try:
+        song = Song.query.get(song_id)
+    except Exception as e:
+        return "Object not found for ID %s", 400
+    db.session.commit()
+    return jsonify(song_schema.dumps(song))
+
+@app.route("/song/<int:song_id>", methods=['PUT'])
 def update_song(song_id):
     """Update Song
     ---
@@ -113,7 +142,7 @@ def update_song(song_id):
     db.session.commit()
     return jsonify(song_schema.dumps(song))
 
-@app.route("/song/<int:id>", methods=['DELETE'])
+@app.route("/song/<int:song_id>", methods=['DELETE'])
 def delete_song(song_id):
     """Delete Song
     ---
