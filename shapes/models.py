@@ -22,13 +22,9 @@ class Source(db.Model):
     publication_date = db.Column(db.DateTime)
     location = db.Column(db.String)
 
-class Artist(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
-
-class Shape(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String)
+#class Shape(db.Model):
+#    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+#    name = db.Column(db.String)
 
 # Example of a Song document
 # {
@@ -44,32 +40,23 @@ class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     capture_date = db.Column(db.DateTime)
     source_id = db.Column(db.Integer, db.ForeignKey(Source.id))
-    artist_id = db.Column(db.Integer, db.ForeignKey(Artist.id))
     title = db.Column(db.String)
+    artist_name = db.Column(db.String)
     video_id = db.Column(db.String)
-    shape_id = db.Column(db.Integer, db.ForeignKey(Shape.id))
 
-    artist = relationship('Artist', foreign_keys='Song.artist_id')
-    shape = relationship('Shape', foreign_keys='Song.shape_id')
-    capture = relationship('Source', foreign_keys='Song.source_id')
-    
+    source = relationship('Source', foreign_keys='Song.source_id')
+
 class SourceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Source
         include_relationships = True
         load_instance = True
 
-class ArtistSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Artist
-        include_relationships = True
-        load_instance = True
-
-class ShapeSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Shape
-        include_relationships = True
-        load_instance = True
+#class ShapeSchema(SQLAlchemyAutoSchema):
+#    class Meta:
+#        model = Shape
+#        include_relationships = True
+#        load_instance = True
 
 class SongSchema(SQLAlchemyAutoSchema):
     class Meta:
