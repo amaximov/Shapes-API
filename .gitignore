@@ -1,0 +1,11 @@
+# Ignore emacs backup files
+*.*~
+
+# Ignore the python bytecode folder
+**/__pycache__/
+
+# Ignore the node_modules folder
+**/node_modules/
+
+# Ignore Mac system files
+.DS_store
