@@ -12,14 +12,14 @@
 	  xhr.onload = function(e) {
 	      var uInt8Array = new Uint8Array(xhr.response);
 	      var db = new SQL.Database(uInt8Array);
-	      var stmt = db.prepare("SELECT * FROM song ORDER BY RANDOM() LIMIT 1;");
+	      var stmt = db.prepare("SELECT * FROM song WHERE NOT video_id = '' ORDER BY RANDOM() LIMIT 1;");
 	      var template = document.getElementById("template.youtube");
 	      while(stmt.step()){
 		  var row = stmt.getAsObject();	
 		  var instance = template.cloneNode(true);
 		  instance.style.display = "block";
 		  var frame = instance.getElementsByTagName('iframe')[0];
-		  frame.setAttribute('src', "https://www.youtube.com/embed/" + row.youtube_id);
+		  frame.setAttribute('src', "https://www.youtube.com/embed/" + row.video_id);
 		  var player = document.getElementById('player');
 		  player.appendChild(instance);
 	      }
