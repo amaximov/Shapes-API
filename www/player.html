@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-duration-format/1.3.0/moment-duration-format.min.js"></script>
+    <script>
+
+      // This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // Define variables
+      var player;
+      var vids;
+      var currentVideo = -1;
+      var session = {}
+        session.events = [];
+
+      // Fetch the vids from the database
+      fetch('/songs_api')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        // console.log(data);
+        vids = shuffle(data);
+      });
+
+      // Define player configurations
+      var playerConfig = {
+        playerVars: {
+        },
+        events: {
+          'onReady': playNext,
+          'onStateChange': onPlayerStateChange
+        }
+      };
+
+      // This function creates an <iframe> (and YouTube player) after the API code downloads.
+      function onYouTubePlayerAPIReady() {
+        console.log("API Ready");
+        player = new YT.Player('player', playerConfig);
+      }
+
+      // The API calls this function when the player's state changes.
+      function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.ENDED) {
+          // console.log("ENDED");
+
+          var endDate = new Date();
+          var endStamp = endDate.getTime();
+
+          // console.log ("load stamp: "+loadStamp);
+          // console.log ("end stamp: "+endStamp);
+          // console.log ("stamp diff: "+(endStamp - loadStamp))
+
+          if ((endStamp - loadStamp) > 300) {
+          playNext();
+          }
+        }
+      }
+
+      // The Fischer-Yates Shuffle
+      function shuffle(array) {
+      	var m = array.length, t, i;
+
+      	// While there remain elements to shuffle…
+      	while (m) {
+      		// Pick a remaining element…
+      		i = Math.floor(Math.random() * m--);
+
+      		// And swap it with the current element.
+      		t = array[m];
+      		array[m] = array[i];
+      		array[i] = t;
+      	}
+
+      	return array;
+      }
+
+      // Loads video, start & end times, timestamp
+      function loadVideo(videoIndex) {
+
+        loadDate = new Date();
+        loadStamp = loadDate.getTime();
+        videoId = vids[videoIndex].videoId;
+
+        // put the db values into vars
+        startDur = vids[videoIndex].startDur;
+        endDur = vids[videoIndex].endDur;
+        videoDur = vids[videoIndex].videoDur;
+
+        // convert start & end to seconds for the player
+        startSeconds = moment.duration(startDur).format("s");
+        endSeconds = moment.duration(endDur).format("s");
+
+        // convert values to h:m:s for logging
+        startHms = moment.duration(startDur).format("h:m:s");
+        endHms = moment.duration(endDur).format("h:m:s");
+        videoHms = moment.duration(videoDur).format("h:m:s");
+
+        player.loadVideoById({
+          videoId: videoId,
+          startSeconds: startSeconds,
+          endSeconds: endSeconds
+        });
+
+        // write previous session data to the db
+        sendData();
+
+        // new session data
+        session.videoId = videoId;
+        session.loadStamp = loadStamp;
+        session.events.length = 0;
+
+        // console.log(session);
+        // console.log("current videoId: " + videoId);
+        // console.log("loaded at: " + loadStamp);
+
+    	}
+
+      // Plays next song after state change or "Try Another" button
+      function playNext() {
+      	if(currentVideo < vids.length-1) {
+      		currentVideo++;
+      	}
+      	else {
+      		currentVideo = 0;
+      	}
+
+        loadVideo(currentVideo);
+      }
+
+      // Plays previous song after "Go Back" button
+      function playPrevious() {
+      	if(currentVideo > 0) {
+      		currentVideo--;
+      	}
+      	else {
+      		currentVideo = vids.length - 1;
+      	}
+
+     		loadVideo(currentVideo);
+      }
+
+      document.addEventListener("keydown", function() {
+        // Get JavaScript's timestamp
+        var date = new Date();
+        var clockTimeUNIX = date.getTime();
+
+        // Get the YT player's timestamp (seconds) and convert to millis
+        var playerMs = 1000 * player.getCurrentTime();
+        // Round videoTime to remove the decimal places
+        var videoTimeMs = playerMs.toFixed(0);
+
+        // push these timestamps into session.events
+        session.events.push({
+          "clockTimeUNIX": clockTimeUNIX,
+          "videoTimeMs": videoTimeMs
+        });
+
+        // log it out
+        console.log(session.events.length);
+        // console.log(session.events);
+        console.log(clockTimeUNIX + " ms since the beginning of UNIX time");
+        console.log(videoTimeMs + " ms since the beginning of this video \n \n");
+      });
+
+    function sendData() {
+      var xhr = new XMLHttpRequest();
+
+      // if the post went through, this logs it
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          console.log("session sent to the db!");
+          console.log(this.responseText);
+
+          // info about the current video after sendData
+          console.log("current videoId is: " + videoId);
+          console.log("should start at: " + startHms);
+          console.log("should end at: " + endHms);
+          console.log("of total duration: " + videoHms);
+        }
+      });
+
+      xhr.open("POST", "/session");
+      xhr.setRequestHeader("Content-Type", "application/json");
+
+      var data = JSON.stringify(session);
+      xhr.send(data);
+      // could also do:
+      // XHR.send(JSON.stringify(session));
+    }
+
+    </script>
+  </head>
+
+  <body>
+
+    <div id="player"></div>
+
+    <br><button onclick="playNext()">Try Another</button>
+    <br><button onclick="playPrevious()">Go Back</button>
+
+  </body>
+</html>
