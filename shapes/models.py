@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, fields
+
 from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
