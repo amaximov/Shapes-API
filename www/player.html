@@ -20,7 +20,7 @@
         session.events = [];
 
       // Fetch the vids from the database
-      fetch('/songs_api')
+      fetch('/api/song')
       .then(function(response) {
         return response.json();
       })
