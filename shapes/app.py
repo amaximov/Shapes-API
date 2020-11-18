@@ -39,7 +39,7 @@ spec.components.schema("Song", schema=SongSchema)
 
 # Initialize schemas
 song_schema = SongSchema()
-songs_schema = SongSchema(many=True)
+songs_schema = PlaylistingSchema(many=True)
 
 # Create a song
 @app.route('/song', methods=['POST'])
