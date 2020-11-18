@@ -1,5 +1,5 @@
 #Import required packages
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from apispec.ext.marshmallow import MarshmallowPlugin
@@ -14,7 +14,7 @@ import json
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///../www/shapes.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=True 
 
 db.init_app(app)
 app.app_context().push()
@@ -56,7 +56,7 @@ def add_song():
             application/json:
               schema: SongSchema
         400:
-          description: Creation failed. More details in error message.
+          description: Creation failed. More details in error message.              
     """
     try:
         new_song = song_schema.load(request.json, session=db.session)
@@ -105,7 +105,7 @@ def update_song(song_id):
             application/json:
               schema: SongSchema
         400:
-          description: Update failed. More details in error message.
+          description: Update failed. More details in error message.              
     """
     song = Song.query.get(song_id)
     try:
@@ -133,14 +133,14 @@ def delete_song(song_id):
         200:
           description: Song delete succeeded
         400:
-          description: Deletion failed. More details in error message.
+          description: Deletion failed. More details in error message.              
     """
     song = Song.query.get(song_id)
     db.session.delete(song)
     db.session.commit()
     return jsonify(song_schema.dumps(song))
 
-
+# What does this do?
 with app.test_request_context():
     spec.path(view=add_song)
     spec.path(view=delete_song)
@@ -149,7 +149,7 @@ with app.test_request_context():
 
 with open('www/swagger.json', 'w') as f:
     json.dump(spec.to_dict(), f)
-
+    
 # this tricky little weirdness is python boilerplate for "if this file is executed directly, do [action]"
 # where "action" here, is to call the "run" function on the flask "app" (in debug mode)
 if __name__ == '__main__':
