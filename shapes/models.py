@@ -49,9 +49,9 @@ class SongSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
 
-# Playlisting view
+# Player view
 
-class Playlisting(db.Model):
+class Player(db.Model):
     title = db.Column(db.String)
     artist_name = db.Column(db.String)
     video_id = db.Column(db.String)
@@ -63,8 +63,8 @@ class Playlisting(db.Model):
     end_dur = db.Column(db.String)
     interaction_notes = db.Column(db.String)
 
-class PlaylistingSchema(SQLAlchemyAutoSchema):
+class PlayerSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Playlisting
+        model = Player
         include_relationships = True
         load_instance = True

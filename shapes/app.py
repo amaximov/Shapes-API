@@ -39,7 +39,7 @@ spec.components.schema("Song", schema=SongSchema)
 
 # Initialize schemas
 song_schema = SongSchema()
-songs_schema = PlaylistingSchema(many=True)
+songs_schema = SongSchema(many=True)
 
 # Create a song
 @app.route('/song', methods=['POST'])
@@ -81,7 +81,7 @@ def get_songs():
             application/json:
               schema: SongSchema
     """
-    songs = Playlisting.query.all()
+    songs = Song.query.all()
     return jsonify(songs_schema.dump(songs))
 
 # Update a song
