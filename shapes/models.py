@@ -23,6 +23,12 @@ class Source(db.Model):
     publication_date = db.Column(db.DateTime)
     location = db.Column(db.String)
 
+class SourceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Source
+        include_relationships = True
+        load_instance = True
+
 # Example of a Song document
 # {
 #   "id":1,
@@ -36,12 +42,6 @@ class Song(db.Model):
     title = db.Column(db.String)
     artist_name = db.Column(db.String)
     video_id = db.Column(db.String)
-
-class SourceSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Source
-        include_relationships = True
-        load_instance = True
 
 class SongSchema(SQLAlchemyAutoSchema):
     class Meta:
