@@ -8,7 +8,9 @@ The data is organized into two separate databases. In general, `shapes.sqlite` c
 **Shapes Application Data**  
 `shapes.sqlite`
 - [Source Data](#source-data)  
-- [Initial Song Data](#initial-song-data)  
+- [Song Data](#song-data)
+- [Source-Song Join Table](#source-song-join-table)
+- [Multi-song Videos](#multi-song-videos)   
 - [Automatic Video Metadata](#automatic-video-metadata)  
 - [Manual Video Metadata](#manual-video-metadata)  
 - [Video Zoom](#video-zoom)  
@@ -112,6 +114,20 @@ source_song ||
 # 	"source_id" : 1,
 # 	"song_id" : 1,
 # }
+```
+
+
+### Multi-song Videos
+The `multisong_vid` table tracks `video_ids` that are valid duplicates.
+
+multisong_vid ||
+--- | --- |
+`id` | `integer`<br> The unique `id` for the valid match. |
+`video_id` | `varchar`<br> The YouTube video ID for the multi-song video. The count of unique `video_ids` in this table gives the valid duplicate count for each `video_id`. |
+`song_id` | `integer`<br> The unique `id` for each song that corresponds to a multi-song video. |
+
+```
+# Example of a multisong_vid record
 ```
 
 
