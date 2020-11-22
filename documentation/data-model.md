@@ -137,12 +137,12 @@ The `yt_metadata` schema describes video metadata updated automatically from the
 yt_metadata ||
 --- | --- |
 `video_id` | `varchar`<br> The YouTube video ID. Used to reference the song(s) that use this video. |
-`dl` | `boolean`<br> Indicates whether there is a downloaded copy of the video file on the Shapes server (copyright lawyers avert your eyes). |
-`yt_exists` | `boolean`<br> Indicates if the video is currently available on YouTube (not removed). Updated regularly. |
+`dl` | `bool`<br> Indicates whether there is a downloaded copy of the video file on the Shapes server (copyright lawyers avert your eyes). |
+`yt_exists` | `bool`<br> Indicates if the video is currently available on YouTube (not removed). Updated regularly. |
 `yt_view_count` | `integer`<br> The number of YouTube views, updated regularly. |
 `yt_regions_allowed` | `enum`<br> Regions where the video is explicitly allowed, updated regularly. A video is available in your local region if: a) your region appears in this list; or b) your region does *not* appear in `yt_regions_blocked`; or c) your region does not appear in either list. |
 `yt_regions_blocked` | `enum`<br> Regions where the video is explicitly blocked, updated regularly. A video is available in your local region if: a) your region does *not* appear in this list; or b) your region appears in `yt_regions_allowed`; or c) your region does not appear in either list. |
-`yt_age_restricted` | `boolean`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
+`yt_age_restricted` | `bool`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
 `yt_publication_date` | `datetime`<br> The date the video was published to YouTube. This often (but not always) indicates a song's release date. |
 `duration` | `varchar`<br> The length of the video represented as a Bergsonian... wait, no, as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration. |
 `iframe_width` | `integer`<br> YouTube's recommended iframe width. This is the closest we can get to YouTube's file `widthPixels` and `aspectRatio`, which are only visible to the video owner. |
@@ -162,6 +162,7 @@ video_metadata ||
 --- | --- |
 `song_id` | `integer`<br> A reference to the song (not the `video_id`, since it's possible for one video to contain multiple songs). |
 `has_video` | `enum`<br> Indicates whether the `video_id` has a decent quality music video ("Y"), or a static image ("N"), or is a temporary or lyric video, etc ("T"). |
+`check_back` | `bool`<br> Flags a video to check back later for a possible update to the `video_id` and `has_video`. For example, if a lyric video seems likely to be replaced soon by an official video. |
 `start_time` | `time`<br> The time one second before the second when music begins (to trim non-music intros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `end_time` | `time`<br> The time one second after the second when the song ends (to trim non-music outros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `release_year` | `year`<br> The year the song was first released, which may be different from the year it was published to YouTube. Can take a little research, especially for older songs. |
