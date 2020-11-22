@@ -72,29 +72,48 @@ source ||
 # }
 ```
 
-### Initial Song Data
-The `song` schema describes basic data for adding a new song to the database.
+
+### Song Data
+The `song` schema describes a unique song added to the database.
 
 song ||
 --- | --- |
 `id` | `integer`<br> The unique `id` for the song. |
-`capture_date` | `datetime`<br> The date the song was added to the database. |
-`source_id` | `integer`<br> A reference to the `source` the song was added from. |
 `title` | `varchar`<br> The title of the song. |
-`artist_name` | `varchar`<br> The name of the artist or artists listed in the source, prior to deduplication or cleanup. |
+`artist_name` | `varchar`<br> The name of the artist or artists, prior to artist deduplication or cleanup. |
 `video_id` | `varchar`<br> The YouTube video ID. |
 
 ```
 # Example of a song record
 # {
 # 	"id" : "1",
-# 	"capture_date" : "2020-05-04 21:25:11.000000",
-# 	"capture_source" : "1",
 # 	"title" : "St. Percy",
 # 	"artist_name" : "Brockhampton",
 # 	"video_id" : "rp-I-YGg6Hs"
 # }
 ```
+
+
+### Source-Song Join Table
+The `source_song` schema allows many-to-many relationships between sources and songs.
+
+source_song ||
+--- | --- |
+`id` | `integer`<br> The unique `id` for the source-song reference. |
+`capture_date` | `datetime`<br> The date the song instance was added to the database. |
+`source_id` | `integer`<br> A reference to the `source` the song was added from. |
+`song_id` | `integer`<br> A reference to the unique `song` added. |
+
+```
+# Example of a source_song record
+# {
+# 	"id" : 1,
+# 	"capture_date" : "2020-05-04 21:25:11.000000",
+# 	"source_id" : 1,
+# 	"song_id" : 1,
+# }
+```
+
 
 ### Automatic Video Metadata
 The `yt_metadata` schema describes video metadata updated automatically from the YouTube Data API and youtube-dl.
@@ -109,7 +128,7 @@ yt_metadata ||
 `yt_regions_blocked` | `enum`<br> Regions where the video is explicitly blocked, updated regularly. A video is available in your local region if: a) your region does *not* appear in this list; or b) your region appears in `yt_regions_allowed`; or c) your region does not appear in either list. |
 `yt_age_restricted` | `boolean`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
 `yt_publication_date` | `datetime`<br> The date the video was published to YouTube. This often (but not always) indicates a song's release date. |
-`duration` | `varchar`<br> The length of the video represented as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration. |
+`duration` | `varchar`<br> The length of the video represented as a Bergsonian... wait, no, as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration. |
 `iframe_width` | `integer`<br> YouTube's recommended iframe width. This is the closest we can get to YouTube's file `widthPixels` and `aspectRatio`, which are only visible to the video owner. |
 `iframe_height` | `integer`<br> YouTube's recommended iframe height in pixels. This is the closest we can get to YouTube's file `heightPixels` and `aspectRatio`, which are only visible to the video owner. |
 `file_width` | `integer`<br> The pixel width of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
