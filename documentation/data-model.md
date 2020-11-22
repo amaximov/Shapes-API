@@ -163,6 +163,7 @@ video_metadata ||
 `song_id` | `integer`<br> A reference to the song (not the `video_id`, since it's possible for one video to contain multiple songs). |
 `has_video` | `enum`<br> Indicates whether the `video_id` has a decent quality music video ("Y"), or a static image ("N"), or is a temporary or lyric video, etc ("T"). |
 `check_back` | `bool`<br> Flags a video to check back later for a possible update to the `video_id` and `has_video`. For example, if a lyric video seems likely to be replaced soon by an official video. |
+`shelf_life` | `bool`<br> Indicates if the song is temporally bounded to a specific event, and not just to the stylistic qualities of its era. |
 `start_time` | `time`<br> The time one second before the second when music begins (to trim non-music intros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `end_time` | `time`<br> The time one second after the second when the song ends (to trim non-music outros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `release_year` | `year`<br> The year the song was first released, which may be different from the year it was published to YouTube. Can take a little research, especially for older songs. |
