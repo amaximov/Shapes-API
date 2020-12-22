@@ -11,9 +11,9 @@ The data is organized into two separate databases. In general, `shapes.sqlite` c
 - [Song Data](#song-data)
 - [Source-Song Join Table](#source-song-join-table)
 - [Multi-song Videos](#multi-song-videos)   
-- [Automatic Video Metadata](#automatic-video-metadata)  
 - [Manual Video Metadata](#manual-video-metadata)  
 - [Video Zoom](#video-zoom)  
+- [Automatic Video Metadata](#automatic-video-metadata)  
 - [Key Level Context](#key-level-context)  
 - [Chord Level Context](#chord-level-context)  
 - [Song Preferences](#song-preferences)  
@@ -51,7 +51,7 @@ This is the data required by user-facing Shapes applications.
 
 
 ### Source Data  
-The `source` schema describes the source (e.g. a chart, playlist, article, etc.) from which songs were added to the database.
+The `source` model describes the source (e.g. a chart, playlist, article, etc.) from which songs were added to the database.
 
 source ||
 --- | --- |
@@ -63,7 +63,17 @@ source ||
 `location` | `varchar`<br> The URL of the source instance at the time it was added to the database. |
 
 ```
-# Example of a source record
+# schema
+# (
+#   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+#   parent_entity VARCHAR,
+#   parent_stream VARCHAR,
+#   instance_name VARCHAR,
+#   publication_date DATETIME,
+#   location VARCHAR
+# );
+
+# Example record
 # {
 # 	"id" : "1",
 # 	"parent_entity" : "Complex",
@@ -76,7 +86,7 @@ source ||
 
 
 ### Song Data
-The `song` schema describes a unique song added to the database.
+The `song` model describes a unique song added to the database.
 
 song ||
 --- | --- |
@@ -86,7 +96,15 @@ song ||
 `video_id` | `varchar`<br> The YouTube video ID. |
 
 ```
-# Example of a song record
+# Schema
+# (
+#   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+#   title VARCHAR,
+#   artist_name VARCHAR,
+#   video_id VARCHAR
+# );
+
+# Example record
 # {
 # 	"id" : "1",
 # 	"title" : "St. Percy",
@@ -97,7 +115,7 @@ song ||
 
 
 ### Source-Song Join Table
-The `source_song` schema allows many-to-many relationships between sources and songs.
+The `source_song` table allows many-to-many relationships between sources and songs.
 
 source_song ||
 --- | --- |
@@ -107,7 +125,17 @@ source_song ||
 `song_id` | `integer`<br> A reference to the unique `song` added. |
 
 ```
-# Example of a source_song record
+# Schema
+# (
+#    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+#    capture_date DATETIME,
+#    source_id INTEGER,
+#    song_id INTEGER,
+#    FOREIGN KEY(source_id) REFERENCES source (id),
+#    FOREIGN KEY(song_id) REFERENCES song (id)
+# );
+
+# Example record
 # {
 # 	"id" : 1,
 # 	"capture_date" : "2020-05-04 21:25:11.000000",
@@ -127,36 +155,21 @@ multisong_vid ||
 `song_id` | `integer`<br> The unique `id` for each song that corresponds to a multi-song video. |
 
 ```
-# Example of a multisong_vid record
-```
+# Schema
+# (
+#   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+#   video_id VARCHAR,
+#   song_id VARCHAR,
+#   FOREIGN KEY(video_id) REFERENCES song (video_id)
+#   FOREIGN KEY(song_id) REFERENCES song (id)
+# );
 
-
-### Automatic Video Metadata
-The `yt_metadata` schema describes video metadata updated automatically from the YouTube Data API and youtube-dl.
-
-yt_metadata ||
---- | --- |
-`video_id` | `varchar`<br> The YouTube video ID. Used to reference the song(s) that use this video. |
-`dl` | `bool`<br> Indicates whether there is a downloaded copy of the video file on the Shapes server (copyright lawyers avert your eyes). |
-`yt_exists` | `bool`<br> Indicates if the video is currently available on YouTube (not removed). Updated regularly. |
-`yt_view_count` | `integer`<br> The number of YouTube views, updated regularly. |
-`yt_regions_allowed` | `enum`<br> Regions where the video is explicitly allowed, updated regularly. A video is available in your local region if: a) your region appears in this list; or b) your region does *not* appear in `yt_regions_blocked`; or c) your region does not appear in either list. |
-`yt_regions_blocked` | `enum`<br> Regions where the video is explicitly blocked, updated regularly. A video is available in your local region if: a) your region does *not* appear in this list; or b) your region appears in `yt_regions_allowed`; or c) your region does not appear in either list. |
-`yt_age_restricted` | `bool`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
-`yt_publication_date` | `datetime`<br> The date the video was published to YouTube. This often (but not always) indicates a song's release date. |
-`duration` | `varchar`<br> The length of the video represented as a Bergsonian... wait, no, as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration. |
-`iframe_width` | `integer`<br> YouTube's recommended iframe width. This is the closest we can get to YouTube's file `widthPixels` and `aspectRatio`, which are only visible to the video owner. |
-`iframe_height` | `integer`<br> YouTube's recommended iframe height in pixels. This is the closest we can get to YouTube's file `heightPixels` and `aspectRatio`, which are only visible to the video owner. |
-`file_width` | `integer`<br> The pixel width of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
-`file_height` | `integer`<br> The pixel height of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
-
-```
-# Example of a yt_metadata record
+# Example record
 ```
 
 
 ### Manual Video Metadata
-The `video_metadata` schema describes video metadata that requires some help from a human to determine.
+The `video_metadata` model describes metadata that needs some help from a human to fill in.
 
 video_metadata ||
 --- | --- |
@@ -169,12 +182,24 @@ video_metadata ||
 `release_year` | `year`<br> The year the song was first released, which may be different from the year it was published to YouTube. Can take a little research, especially for older songs. |
 
 ```
-# Example of a video_metadata record
+# Schema
+# (
+#   song_id INTEGER,
+#   has_video VARCHAR,
+#   check_back BOOLEAN,
+#   shelf_life BOOLEAN,
+#   start_time TIME,
+#   end_time TIME,
+#   release_year INTEGER,
+#   FOREIGN KEY(song_id) REFERENCES song (id)
+# );
+
+# Example record
 ```
 
 
 ### Video Zoom
-The `video_zoom` schema describes data needed to scale the active video content (inside letterboxing) to fill the browser window.
+The `video_zoom` model describes data needed to scale the active video content (inside letterboxing) to fill the browser window.
 
 video_zoom ||
 --- | --- |
@@ -185,27 +210,73 @@ video_zoom ||
 `y_offset` | `integer`<br> A pixel value based on `video_height` to correct active video content that is not centered on the y axis (uncommon).
 
 ```
-# Example of a video_zoom record
+# Schema
+
+# Example record
 ```
+
+
+### Automatic Video Metadata
+The `yt_data_onetime` model describes video metadata updated once from the YouTube Data API.
+
+yt_data_onetime ||
+--- | --- |
+`video_id` | `varchar`<br> The YouTube video ID. Used to reference the song(s) that use this video. |
+`dl` | `bool`<br> Indicates whether there is a copy of the video file on the Shapes server. |
+`yt_publication_date` | `datetime`<br> The date the video was published to YouTube. This often (but not always) indicates a song's release date. |
+`duration` | `varchar`<br> The length of the video represented as a Bergsonian... wait, no, as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Durations) duration. |
+`iframe_width` | `integer`<br> YouTube's recommended iframe width. This is the closest we can get to YouTube's file `widthPixels` and `aspectRatio`, which are only visible to the video owner. |
+`iframe_height` | `integer`<br> YouTube's recommended iframe height in pixels. This is the closest we can get to YouTube's file `heightPixels` and `aspectRatio`, which are only visible to the video owner. |
+`file_width` | `integer`<br> The pixel width of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
+`file_height` | `integer`<br> The pixel height of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
+
+```
+# Schema
+
+# Example record
+```
+
+
+The `yt_data_recurring` model describes video metadata updated regularly from the YouTube Data API.
+
+yt_data_recurring ||
+--- | --- |
+`video_id` | `varchar`<br> The YouTube video ID. Used to reference the song(s) that use this video. |
+`yt_exists` | `bool`<br> Indicates if the video is currently available on YouTube (not removed). |
+`yt_view_count` | `integer`<br> The number of YouTube views. |
+`yt_regions_allowed` | `enum`<br> Regions where the video is explicitly allowed. A video is available in your local region if: a) your region appears in this list; or b) your region does *not* appear in `yt_regions_blocked`; or c) your region does not appear in either list. |
+`yt_regions_blocked` | `enum`<br> Regions where the video is explicitly blocked. A video is available in your local region if: a) your region does *not* appear in this list; or b) your region appears in `yt_regions_allowed`; or c) your region does not appear in either list. |
+`yt_age_restricted` | `bool`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
+
+```
+# Schema
+
+# Example record
+```
+
 
 ### Key Level Context  
-The `key_context` schema is a synthesis of [`key_context`](#user-key-level-context) user data. References `song_id` rather than `session_id`.
+The `key_context` model interprets [`key_context`](#user-key-level-context) user data. References `song_id` rather than `session_id`.
 
 ```
-# Example of a key_context record
+# Schema
+
+# Example record
 ```
 
 
 ### Chord Level Context  
-The `chord_context` schema is a synthesis of [`chord_context`](#user-chord-level-context) user data. References `song_id` rather than `session_id`.
+The `chord_context` model interprets [`chord_context`](#user-chord-level-context) user data. References `song_id` rather than `session_id`.
 
 ```
-# Example of a chord_context record
+# Schema
+
+# Example record
 ```
 
 
 ### Song Preferences
-The `preference` schema describes data for determining which songs to include or feature. Informed by [`favorite`](#user-song-favorites) and [`rating`](#user-song-rating) data in `shapes_experiments.sqlite`.
+The `preference` model describes data for determining which songs to include or feature. Informed by [`favorite`](#user-song-favorites) and [`rating`](#user-song-rating) data in `shapes_experiments.sqlite`.
 
 preference ||
 --- | --- |
@@ -215,12 +286,14 @@ preference ||
 `kids` | `bool`<br> Indicates if the song is particularly well-suited for kids.
 
 ```
-# Example of a preference record
+# Schema
+
+# Example record
 ```
 
 
 ### Audio Data
-The `audio` schema describes audio attributes of the song relevant to player and instrument settings.
+The `audio` model describes audio attributes of the song relevant to player and instrument settings.
 
 audio ||
 --- | --- |
@@ -230,12 +303,14 @@ audio ||
 `timbre` | `varchar`<br> The timbral profile for the song. Something like an EchoNest valence. Looking forward to figuring out exactly what this means, but will be related to choosing instrument timbres that sound good with the song.
 
 ```
-# Example of an audio record
+# Schema
+
+# Example record
 ```
 
 
 ### Default Instrument Settings
-The `instrument` schema describes settings for a default browser instrument yet to be built.
+The `instrument` model describes settings for a default browser instrument yet to be built.
 
 instrument ||
 --- | --- |
@@ -247,12 +322,14 @@ instrument ||
 `volume` | `integer`<br> The default volume setting for the instrument, based on the `preset`. Ideally, volume is ignostic to the choice of `preset`. Potentially related to the song's volume profile described by `audio.volume`. |
 
 ```
-# Example of an instrument record
+# Schema
+
+# Example record
 ```
 
 
 ### Original iPad App Instrument Settings
-The `ipad_instrument` schema describes settings for the sampler instrument included in the original Shapes iPad App from 2012-2013.
+The `ipad_instrument` model describes settings for the sampler instrument included in the original Shapes iPad App from 2012-2013.
 
 ipad_instrument ||
 --- | --- |
@@ -261,7 +338,9 @@ ipad_instrument ||
 `volume` | `type`<br> The default volume setting for the sampler, based on the `preset`. May reflect an overall volume/gain profile for the song. |
 
 ```
-# Example of an ipad_instrument record
+# Schema
+
+# Example record
 ```
 
 
@@ -271,7 +350,7 @@ This is the data generated by user-facing Shapes applications.
 
 
 ### Session Data
-The `session` schema identifies which song was played, when it was played, and the application and user context for the play. A session corresponds to a single song play.
+The `session` model identifies which song was played, when it was played, and the application and user context for the play. A session corresponds to a single song play.
 
 session ||
 --- | --- |
@@ -283,12 +362,14 @@ session ||
 `user` | `varchar`<br> A unique username chosen by the user. |
 
 ```
-# Example of a session record
+# Schema
+
+# Example record
 ```
 
 
 ### User Key Level Context
-The `key_context` schema contains user data to inform the `key_context` table in `shapes.sqlite`.
+The `key_context` model contains user data to inform the `key_context` table in `shapes.sqlite`.
 
 key_context ||
 --- | --- |
@@ -299,12 +380,14 @@ key_context ||
 `multi_anchors` | `object`<br> Indicates key-level anchor changes within the song. Each change defines:  <br>- the `timestamp` within the video when the change takes place, and <br>- the `anchor` that corresponds to the `timestamp`. |
 
 ```
-# Example of a key_context record
+# Schema
+
+# Example record
 ```
 
 
 ### User Chord Level Context
-The `chord_context` schema contains user data to inform the `chord_context` table in `shapes.sqlite`.
+The `chord_context` model contains user data to inform the `chord_context` table in `shapes.sqlite`.
 
 chord_context ||
 --- | --- |
@@ -314,12 +397,14 @@ chord_context ||
 `root_notes` | `object`<br> Indicates chord-level root note changes within the song, if different from `bass_notes`. This introduces the idea of "function." Each change defines:  <br>- the `timestamp` within the video when the change takes place, and <br>- the `root_note` that corresponds to the `timestamp`. |
 
 ```
-# Example of a chord_context record
+# Schema
+
+# Example record
 ```
 
 
 ### User Comments  
-The `comment` schema contains user comments and interaction notes.
+The `comment` model contains user comments and interaction notes.
 
 comment ||
 --- | --- |
@@ -329,12 +414,14 @@ comment ||
 `utc_time` | `datetime`<br> The UTC timestamp that corresponds to the comment. |
 
 ```
-# Example of a comment record
+# Schema
+
+# Example record
 ```
 
 
 ### User Song Favorites
-The `favorite` schema contains data indicating user song favorites. The data informs the `preference` schema in `shapes.sqlite`.
+The `favorite` model contains data indicating user song favorites. The data informs the `preference` model in `shapes.sqlite`.
 
 favorite ||
 --- | --- |
@@ -344,12 +431,14 @@ favorite ||
 `skip_time` | `time`<br> Indicates if the user skipped the song, and provides a timestamp within the video. |
 
 ```
-# Example of a favorite record
+# Schema
+
+# Example record
 ```
 
 
 ### User Song Rating
-The `rating` schema describes data indicating user opinions about song rating. The data informs the `preference` schema in `shapes.sqlite`.
+The `rating` model describes data indicating user opinions about song rating. The data informs the `preference` model in `shapes.sqlite`.
 
 rating ||
 --- | --- |
@@ -358,12 +447,14 @@ rating ||
 `kids` | `bool`<br> The user indicates that the song is well-suited for kids. |
 
 ```
-# Example of a rating record
+# Schema
+
+# Example record
 ```
 
 
 ### Event Data
-The `event` schema describes instrument (MIDI) notes or durationless (timestamp) events, such as pulse markers.
+The `event` model describes instrument (MIDI) notes or durationless (timestamp) events, such as pulse markers.
 
 event ||
 --- | --- |
@@ -376,7 +467,9 @@ event ||
 `velocity` | `integer`<br> The MIDI velocity of the event. |
 
 ```
-# Example of an event record
+# Schema
+
+# Example record
 ```
 
 
