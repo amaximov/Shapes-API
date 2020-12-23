@@ -160,7 +160,6 @@ multisong_vid ||
 #   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
 #   video_id VARCHAR,
 #   song_id VARCHAR,
-#   FOREIGN KEY(video_id) REFERENCES song (video_id)
 #   FOREIGN KEY(song_id) REFERENCES song (id)
 # );
 
