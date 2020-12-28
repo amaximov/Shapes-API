@@ -66,6 +66,7 @@ def add_song():
     db.session.commit()
     return jsonify(song_schema.dump(new_song))
 
+# List songs
 @app.route('/song', methods=['GET'])
 def get_songs():
     """Get Songs.
@@ -83,6 +84,7 @@ def get_songs():
     songs = Song.query.all()
     return jsonify(songs_schema.dump(songs))
 
+# Update a song
 @app.route("/song/<int:id>", methods=['PUT'])
 def update_song(song_id):
     """Update Song
@@ -113,6 +115,7 @@ def update_song(song_id):
     db.session.commit()
     return jsonify(song_schema.dumps(song))
 
+# Delete a song
 @app.route("/song/<int:id>", methods=['DELETE'])
 def delete_song(song_id):
     """Delete Song
@@ -137,6 +140,7 @@ def delete_song(song_id):
     db.session.commit()
     return jsonify(song_schema.dumps(song))
 
+# What does this do?
 with app.test_request_context():
     spec.path(view=add_song)
     spec.path(view=delete_song)
@@ -150,4 +154,3 @@ with open('www/swagger.json', 'w') as f:
 # where "action" here, is to call the "run" function on the flask "app" (in debug mode)
 if __name__ == '__main__':
     app.run(debug=True)
-
