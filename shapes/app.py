@@ -6,7 +6,8 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from marshmallow.exceptions import ValidationError
 from sqlalchemy.orm import scoped_session, sessionmaker
-from shapes.models import db, Source, Song, SourceSchema, SongSchema
+from models import db, Source, Song, SourceSchema, SongSchema
+
 from apispec import APISpec
 import copy
 import json
