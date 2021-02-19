@@ -9,3 +9,8 @@
 
 # Ignore Mac system files
 .DS_store
+
+# and other stuff
+/.idea/
+/conf/venv/
+/venv/
