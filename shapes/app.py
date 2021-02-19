@@ -154,4 +154,4 @@ with open('www/swagger.json', 'w') as f:
 # this tricky little weirdness is python boilerplate for "if this file is executed directly, do [action]"
 # where "action" here, is to call the "run" function on the flask "app" (in debug mode)
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
