@@ -195,3 +195,26 @@ JSON payload failed validation. Missing key: title. Expected keys are: ('title',
 ```
 
 You should see the above message as a 400-status response when posting json with curl. The API is working.
+
+## Docker
+
+### Local developer setup
+
+#### Overview
+
+Docker'izing development environment ensures that Python setup can run anywhere regardless of Operating System 
+or local Python setup.
+
+There are two parts to the setup - the Docker image itself (`Dockerfile` - Linux OS, Python language runtime, 
+our dependencies and source code, and the command to start it all up),
+and the development setup (`docker-compose.yml`) where we mount our local code directory 
+(which includes the sqlite database data) into the container, so that we can live edit our 
+source code, and the Flask app running in the container could notice the changes and reload itself 
+(since it is running in debug mode).
+
+In development mode, Docker pulls a linux distro with latest of Python 3 installed, 
+then installs dependencies for the API. 
+
+* install both `docker` and `docker-compose`
+* run `docker-compose up` - it will build the containers if needed, and then run the app and follow the logs
+* test it as usual using the `curl` command above
