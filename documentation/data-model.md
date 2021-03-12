@@ -533,14 +533,10 @@ Application: [`Song-Scraper`](https://github.com/davidforrest/Song-Scraper)
 - The `video_id` is included in some scrapers, but not all.
 - [Here's a video](https://drive.google.com/file/d/1iJciScKJulp1BurPt_GT1cboh_W1eSLO/view) of what this process looks like.
 
-**Add a non-recurring source**
+**Manually add single songs and non-recurring sources**
 
-- TBD
-- Duplicate songs still logged in `source-song`
-
-**Add a single song**
-
-- TBD
+- Open `manual-add.js` and follow steps in the code.
+- As for recurring sources, manual additions are checked for duplicates and logged in `source-song`.
 
 
 ### Add YouTube Video IDs
@@ -564,7 +560,7 @@ Application: SQLite Studio
 
 - Sometimes a single `video_id` will contain multiple songs.
 - In these (rare) cases, add the duplicate `video_id` to each song, then manually create entries for each song in the `multisong_vid` table.
-- The `multisong_vid` table is to distinguish cases like these from duplicate songs in the database. 
+- The purpose of the `multisong_vid` table is to distinguish cases like these from duplicate songs in the database.
 
 ---
 
