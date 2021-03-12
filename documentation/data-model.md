@@ -560,6 +560,12 @@ Application: SQLite Studio
 - Sometimes while adding a video, you realize you don't actually want that song in the database.
 - Delete the song's row from the `song` table. An `ON DELETE CASCADE` is set up on foreign keys that point to the `song` table, so rows in other tables that reference the deleted `song_id` will be deleted, too.
 
+**Multi-song Videos**
+
+- Sometimes a single `video_id` will contain multiple songs.
+- In these (rare) cases, add the duplicate `video_id` to each song, then manually create entries for each song in the `multisong_vid` table.
+- The `multisong_vid` table is to distinguish cases like these from duplicate songs in the database. 
+
 ---
 
 ### Crawl YouTube Metadata
@@ -603,7 +609,7 @@ youtube-dl -a song_list.txt -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=m
     - `end_time`
     - `release_year`
 - also includes video zoom until that can be automated
-- as when adding `video_id`, optionally add any other metadata or notes. this is the sort of "music criticism" step--it needs some more definition and a place to live. 
+- as when adding `video_id`, optionally add any other metadata or notes. this is the sort of "music criticism" step--it needs some more definition and a place to live.
 
 ### Play Videos as fullscreen background
 
