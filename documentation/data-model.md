@@ -119,6 +119,13 @@ BEGIN
   INSERT INTO preference(song_id)
   VALUES (NEW.id);  
 END;
+
+--Temporary
+CREATE TRIGGER new_comment_row AFTER INSERT ON song  
+BEGIN  
+  INSERT INTO comment(song_id)
+  VALUES (NEW.id);  
+END;
 ```
 ```json
 /* Example record */
