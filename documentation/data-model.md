@@ -114,9 +114,9 @@ BEGIN
   VALUES (NEW.id);  
 END;
 
-CREATE TRIGGER new_staged_row AFTER INSERT ON song  
+CREATE TRIGGER new_preference_row AFTER INSERT ON song  
 BEGIN  
-  INSERT INTO staged_data(song_id)
+  INSERT INTO preference(song_id)
   VALUES (NEW.id);  
 END;
 ```
@@ -202,9 +202,8 @@ The `video_metadata` model describes metadata that needs some help from a human 
 video_metadata ||
 --- | --- |
 `song_id` | `integer`<br> A reference to the song (not the `video_id`, since it's possible for one video to contain multiple songs). |
-`has_video` | `text`<br> Indicates whether the `video_id` has a decent quality music video ("Y"), or a static image ("N"), or is a temporary or lyric video, etc ("T"). |
-`check_back` | `text`<br> Flags a video to check back later for a possible update to the `video_id` and `has_video`. For example, if a lyric video seems likely to be replaced soon by an official video. |
-`shelf_life` | `text`<br> Indicates if the song is temporally bounded to a specific event, and not just to the stylistic qualities of its era. |
+`has_video` | `boolean`<br> Indicates whether the `video_id` has a music video that places you in a world. |
+`check_back` | `boolean`<br> Flags a video to check back later for a possible update to the `video_id` and `has_video`. For example, if a lyric video seems likely to be replaced soon by an official video. |
 `start_time` | `numeric`<br> The time one second before the second when music begins (to trim non-music intros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `end_time` | `numeric`<br> The time one second after the second when the song ends (to trim non-music outros). This is input as displayed on YouTube, and converted to seconds in the player. |
 `release_year` | `integer`<br> The year the song was first released, which may be different from the year it was published to YouTube. Can take a little research, especially for older songs. |
@@ -214,9 +213,8 @@ video_metadata ||
 
 CREATE TABLE video_metadata (
   song_id INTEGER,
-  has_video TEXT,
-  check_back TEXT, -- should be BOOLEAN (NUMERIC)
-  shelf_life TEXT, -- should be BOOLEAN (NUMERIC)
+  has_video NUMERIC,
+  check_back NUMERIC,
   start_time NUMERIC, -- TIME
   end_time NUMERIC, -- TIME
   release_year INTEGER,
@@ -233,7 +231,7 @@ CREATE TABLE video_metadata (
   "shelf_life" : "N",
   "start_time" : "0:00:00",
   "end_time" : "0:02:42",
-  "release_year" : 2013,
+  "release_year" : 2013
 }
 ```
 
@@ -321,14 +319,36 @@ The `preference` model describes data for determining which songs to include or 
 preference ||
 --- | --- |
 `song_id` | `integer`<br> A reference to the song (not the `video_id`, since it's possible for one video to contain multiple songs). |
-`favorite` | `boolean`<br> Indicates if the song is a Shapes featured song. |
+`interesting` | `boolean`<br> Indicates that there's something musically interesting about the song, usually to flag the song during playlisting. This is slightly different from a user `heart`.|
+`featured` | `boolean`<br> Indicates if the song is a Shapes featured song. This is the kind of song you'd want to be your first experience with Shapes, and that's timeless or iconic enough to fit in with a playlist of mostly current songs.|
 `explicit` | `boolean`<br> Indicates if the song contains explicit content. |
 `kids` | `boolean`<br> Indicates if the song is particularly well-suited for kids.
+`shelf_life` | `boolean`<br> Indicates if the song is temporally bounded to a specific event, and not just to the stylistic qualities of its era. |
 
+```sql
+--Schema
+
+CREATE TABLE preference (
+  song_id INTEGER,
+  interesting NUMERIC,
+  featured NUMERIC,
+  explicit NUMERIC,
+  kids NUMERIC,
+  shelf_life NUMERIC,
+  FOREIGN KEY(song_id) REFERENCES song (id) ON DELETE CASCADE
+);
 ```
-# Schema
+```json
+/* Example record */
 
-# Example record
+{
+  "song_id" : 4039,
+  "interesting" : 1,
+  "featured" : NULL,
+  "explicit" : 0,
+  "kids" : 1,
+  "shelf_life" : NULL
+}
 ```
 
 
