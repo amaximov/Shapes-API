@@ -14,3 +14,4 @@
 /.idea/
 /conf/venv/
 /venv/
+/www/swagger.json
