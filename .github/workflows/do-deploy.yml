@@ -1,0 +1,15 @@
+name: DigitalOceanDeploy
+
+on:
+  registry_package:
+
+jobs:
+  deploy-to-do:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Get digital ocean app ID
+        run: `doctl apps list --no-header --format ID`
