@@ -1,6 +1,6 @@
-name: DigitalOceanDeploy
+name: Digital Ocean deploy
 
-on:
+on: 
   registry_package:
 
 jobs:
