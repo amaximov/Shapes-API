@@ -12,5 +12,10 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      - name: Get digital ocean app ID
-        run: doctl apps list --no-header --format ID
+      - name: Get App ID
+        run: |
+          export DO_APP_ID=$( doctl apps list --no-header --format ID )
+          echo "::set-env name=DO_APP_ID::$DO_APP_ID"
+      - name: Trigger redeployment
+        run: doctl apps create-deployment "$DO_APP_ID"
+
