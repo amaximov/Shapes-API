@@ -2,6 +2,7 @@ name: Digital Ocean deploy
 
 on: 
   registry_package:
+  workflow_dispatch:
 
 jobs:
   deploy-to-do:
