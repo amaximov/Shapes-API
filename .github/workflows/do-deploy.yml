@@ -15,7 +15,8 @@ jobs:
       - name: Get App ID
         run: |
           export DO_APP_ID=$( doctl apps list --no-header --format ID )
-          echo "::set-env name=DO_APP_ID::$DO_APP_ID"
-      - name: Trigger redeployment
-        run: doctl apps create-deployment "$DO_APP_ID"
-
+          docker pull docker.pkg.github.com/amaximov/shapes-api/image:latest
+          doctl registry login
+          docker tag image registry.digitalocean.com/shapes/api
+          docker push registry.digitalocean.com/shapes/api
+          doctl apps create-deployment "$DO_APP_ID"
