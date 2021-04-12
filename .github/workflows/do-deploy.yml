@@ -21,7 +21,7 @@ jobs:
       - name: Get App ID
         run: |
           export DO_APP_ID=$( doctl apps list --no-header --format ID )
-          docker pull ghcr.io/amaximov/image:latest
+          docker pull ghcr.io/amaximov/shapes-api-container:latest
           doctl registry login
           docker tag image registry.digitalocean.com/shapes/api
           docker push registry.digitalocean.com/shapes/api
