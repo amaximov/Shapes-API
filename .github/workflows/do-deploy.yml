@@ -4,6 +4,10 @@ on:
   registry_package:
   workflow_dispatch:
 
+env:
+  GH_CONTAINER: ghcr.io/amaximov/shapes-api/shapes-api-container
+  DO_CONTAINER: registry.digitalocean.com/shapes/api
+
 jobs:
   deploy-to-do:
     runs-on: ubuntu-latest
@@ -18,11 +22,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get App ID
+      - name: Run pull-push-redeploy
         run: |
           export DO_APP_ID=$( doctl apps list --no-header --format ID )
-          docker pull ghcr.io/amaximov/shapes-api/shapes-api-container:latest
+          docker pull $GH_CONTAINER:latest
           doctl registry login
-          docker tag ghcr.io/amaximov/shapes-api/shapes-api-container registry.digitalocean.com/shapes/api
-          docker push registry.digitalocean.com/shapes/api
+          docker tag $GH_CONTAINER $DO_CONTAINER
+          docker push $DO_CONTAINER
           doctl apps create-deployment "$DO_APP_ID"
