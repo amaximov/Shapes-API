@@ -12,10 +12,16 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Get App ID
         run: |
           export DO_APP_ID=$( doctl apps list --no-header --format ID )
-          docker pull docker.pkg.github.com/amaximov/shapes-api/image:latest
+          docker pull ghcr.io/amaximov/shapes-api/image:latest
           doctl registry login
           docker tag image registry.digitalocean.com/shapes/api
           docker push registry.digitalocean.com/shapes/api
