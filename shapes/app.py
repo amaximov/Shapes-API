@@ -1,5 +1,7 @@
 #Import required packages
-from flask import Flask, request, jsonify 
+import os
+
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from apispec.ext.marshmallow import MarshmallowPlugin
@@ -154,4 +156,4 @@ with open('www/swagger.json', 'w') as f:
 # this tricky little weirdness is python boilerplate for "if this file is executed directly, do [action]"
 # where "action" here, is to call the "run" function on the flask "app" (in debug mode)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=os.getenv('API_DEBUG') == 'True')
