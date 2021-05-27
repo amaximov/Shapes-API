@@ -1,8 +1,8 @@
 name: Digital Ocean deploy
 
 on: 
-  registry_package:
   workflow_dispatch:
+  package:
 
 env:
   GH_CONTAINER: ghcr.io/amaximov/shapes-api/shapes-api-container
