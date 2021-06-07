@@ -15,7 +15,7 @@ The model is organized into two categories of data tables. Tables listed under "
 - [Automatic Video Metadata](#automatic-video-metadata)  
 - [Key Level Context](#key-level-context)  
 - [Chord Level Context](#chord-level-context)  
-- [Song Preferences](#song-preferences)  
+- [Curation](#curation)  
 - [Audio Data](#audio-data)  
 - [Default Instrument Settings](#default-instrument-settings)  
 - [Original iPad App Instrument Settings](#original-ipad-app-instrument-settings)  
@@ -25,7 +25,7 @@ The model is organized into two categories of data tables. Tables listed under "
 - [User Key Level Context](#user-key-level-context)  
 - [User Chord Level Context](#user-chord-level-context)  
 - [User Comments](#user-comments)  
-- [User Song Favorites](#user-song-favorites)  
+- [User Song Preference](#user-song-preference)  
 - [User Song Rating](#user-song-rating)  
 - [Event Data](#event-data)  
 
@@ -112,16 +112,29 @@ BEGIN
   VALUES (NEW.id);  
 END;
 
-CREATE TRIGGER new_preference_row AFTER INSERT ON song  
+CREATE TRIGGER new_curation_row AFTER INSERT ON song  
 BEGIN  
-  INSERT INTO preference(song_id)
+  INSERT INTO curation(song_id)
   VALUES (NEW.id);  
 END;
 
---Temporary
+-- temporary
+
 CREATE TRIGGER new_comment_row AFTER INSERT ON song  
 BEGIN  
   INSERT INTO comment(song_id)
+  VALUES (NEW.id);  
+END;
+
+CREATE TRIGGER new_user_pref_row AFTER INSERT ON song  
+BEGIN  
+  INSERT INTO user_preference(song_id)
+  VALUES (NEW.id);  
+END;
+
+CREATE TRIGGER new_user_rating_row AFTER INSERT ON song  
+BEGIN  
+  INSERT INTO user_rating(song_id)
   VALUES (NEW.id);  
 END;
 ```
@@ -253,9 +266,9 @@ video_zoom ||
 `y_offset` | `integer`<br> A pixel value based on `video_height` to correct active video content that is not centered on the y axis (uncommon).
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -274,9 +287,9 @@ yt_data_onetime ||
 `file_height` | `integer`<br> The pixel height of the downloaded video file. This can be used to calculate the aspect ratio of the file, which does not necessarily correspond to the aspect ratio of the active video content (inside letterboxing). |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -292,9 +305,9 @@ yt_data_recurring ||
 `yt_age_restricted` | `boolean`<br> Indicates videos where YouTube displays the alert: "This video may be inappropriate for some users." and requires user agreement. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -302,9 +315,9 @@ yt_data_recurring ||
 The `key_context` model interprets [`user_key_context`](#user-key-level-context) user data. References `song_id` rather than `session_id`.
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -312,34 +325,30 @@ The `key_context` model interprets [`user_key_context`](#user-key-level-context)
 The `chord_context` model interprets [`user_chord_context`](#user-chord-level-context) user data. References `song_id` rather than `session_id`.
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
-### Song Preferences
-The `preference` model describes data for determining which songs to include or feature. Informed by [`user_favorite`](#user-song-favorites) and [`user_rating`](#user-song-rating) data.
+### Curation
+The `curation` model describes data for determining which songs to include or feature.
 
-preference ||
+curation ||
 --- | --- |
 `song_id` | `integer`<br> A reference to the song (not the `video_id`, since it's possible for one video to contain multiple songs). |
-`interesting` | `boolean`<br> Indicates that there's something musically interesting about the song, usually to flag the song during playlisting. This is slightly different from a user `heart`.|
-`featured` | `boolean`<br> Indicates if the song is a Shapes featured song. This is the kind of song you'd want to be your first experience with Shapes, and that's timeless or iconic enough to fit in with a playlist of mostly current songs.|
-`explicit` | `boolean`<br> Indicates if the song contains explicit content. |
-`kids` | `boolean`<br> Indicates if the song is particularly well-suited for kids.
+`featured` | `boolean`<br> Indicates if the song is a Shapes featured song. This is the kind of song you'd want to be your first experience with Shapes, and that's timeless or iconic enough to fit in with a playlist of mostly current songs. Or a song you want to get more use data on. |
 `shelf_life` | `boolean`<br> Indicates if the song is temporally bounded to a specific event, and not just to the stylistic qualities of its era. |
+`curate_out` | `boolean`<br> Indicates songs that do not fit with the curatorial values of the playlist, but that remain in the database. |
 
 ```sql
 --Schema
 
-CREATE TABLE preference (
+CREATE TABLE curation (
   song_id INTEGER,
-  interesting NUMERIC,
   featured NUMERIC,
-  explicit NUMERIC,
-  kids NUMERIC,
   shelf_life NUMERIC,
+  curate_out NUMERIC,
   FOREIGN KEY(song_id) REFERENCES song (id) ON DELETE CASCADE
 );
 ```
@@ -348,11 +357,9 @@ CREATE TABLE preference (
 
 {
   "song_id" : 4039,
-  "interesting" : 1,
   "featured" : NULL,
-  "explicit" : 0,
-  "kids" : 1,
-  "shelf_life" : NULL
+  "shelf_life" : NULL,
+  "curate_out" : NULL
 }
 ```
 
@@ -368,9 +375,9 @@ audio ||
 `timbre` | `text`<br> The timbral profile for the song. Something like an EchoNest valence. Looking forward to figuring out exactly what this means, but will be related to choosing instrument timbres that sound good with the song.
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -387,9 +394,9 @@ instrument ||
 `volume` | `integer`<br> The default volume setting for the instrument, based on the `preset`. Ideally, volume is ignostic to the choice of `preset`. Potentially related to the song's volume profile described by `audio.volume`. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -403,9 +410,9 @@ ipad_instrument ||
 `volume` | `integer`<br> The default volume setting for the sampler, based on the `preset`. May reflect an overall volume/gain profile for the song. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -427,14 +434,14 @@ session ||
 `user` | `text`<br> A unique username chosen by the user. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
 ### User Key Level Context
-The `user_key_context` model contains user data to inform the `key_context` table.
+The `user_key_context` model contains user data to inform the [`key_context`](#key-level-context) table.
 
 user_key_context ||
 --- | --- |
@@ -445,14 +452,14 @@ user_key_context ||
 `multi_anchors` | `object`<br> Indicates key-level anchor changes within the song. Each change defines:  <br>- the `timestamp` within the video when the change takes place, and <br>- the `anchor` that corresponds to the `timestamp`. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
 ### User Chord Level Context
-The `user_chord_context` model contains user data to inform the `chord_context` table.
+The `user_chord_context` model contains user data to inform the [`chord_context`](#chord-level-context) table.
 
 user_chord_context ||
 --- | --- |
@@ -462,9 +469,9 @@ user_chord_context ||
 `root_notes` | `object`<br> Indicates chord-level root note changes within the song, if different from `bass_notes`. This introduces the idea of "function." Each change defines:  <br>- the `timestamp` within the video when the change takes place, and <br>- the `root_note` that corresponds to the `timestamp`. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
@@ -478,43 +485,80 @@ user_comment ||
 `video_time` | `numeric`<br> The video timestamp that corresponds to the comment. |
 `utc_time` | `numeric`<br> The UTC timestamp that corresponds to the comment. |
 
+```sql
+--Schema
+
+CREATE TABLE comment (
+  song_id INTEGER,
+  davidforrest TEXT,
+  markforrest TEXT,
+  FOREIGN KEY(song_id) REFERENCES song (id) ON DELETE CASCADE
+);
 ```
-# Schema
-
-# Example record
+```
+/* Example record */
 ```
 
 
-### User Song Favorites
-The `user_favorite` model contains data indicating user song favorites. The data informs the `preference` table.
+### User Song Preference
+The `user_preference` model contains data indicating which songs a user prefers.
 
-user_favorite ||
+user_preference ||
 --- | --- |
 `session_id` | `integer`<br> A reference to the song session. |
-`heart` | `boolean`<br> Indicates if the user has selected the song as a favorite. |
-`select` | `boolean`<br> The user has loaded the song intentionally (such as by choosing "play previous"). |
+`interesting` | `boolean`<br> Indicates that the user finds the song interesting, musically or otherwise. A way of flagging songs. Can also indicate if the user finds a song disinteresting, or dislikes the song. |
+`selected` | `boolean`<br> The user has loaded the song intentionally (such as by choosing "play previous"). |
 `skip_time` | `numeric`<br> Indicates if the user skipped the song, and provides a timestamp within the video. |
 
-```
-# Schema
+```sql
+--Schema
 
-# Example record
+CREATE TABLE user_preference (
+  song_id INTEGER,
+  interesting NUMERIC,
+  selected NUMERIC,
+  skip_time NUMERIC,
+  FOREIGN KEY(song_id) REFERENCES song (id) ON DELETE CASCADE
+);
+```
+```
+/* Example record */
 ```
 
 
 ### User Song Rating
-The `user_rating` model describes data indicating user opinions about song rating. The data informs the `preference` table.
+The `user_rating` model describes data indicating user opinions about song rating.
 
 user_rating ||
 --- | --- |
 `session_id` | `integer`<br> A reference to the song session. |
-`explicit` | `boolean`<br> The user indicates that the song contains explicit content. |
-`kids` | `boolean`<br> The user indicates that the song is well-suited for kids. |
+`feels` | `integer`<br> An affect rating. On a scale of 1-100, how does this song make you feel? |
+`explicit` | `boolean`<br> Indicates if the song is explicit overall, whether or not it contains any of the fields below. |
+`language` | `integer`<br> On a scale of 1-100, does the song contain strong language? A standard MPAA / RIAA category. |
+`violence` | `integer`<br> On a scale of 1-100, does the song contain depictions of violence? A standard MPAA / RIAA category. |
+`sex` | `integer`<br> On a scale of 1-100, does the song contain depictions of sex? A standard MPAA / RIAA category. |
+`substance` | `integer`<br> On a scale of 1-100, does the song contain depictions of substance use/abuse? A standard MPAA / RIAA category. |
+`occult` | `integer`<br> On a scale of 1-100, does the song transgress normative religious or scientific beliefs? From Tipper Gore's PMRC, included here for fun. |
+`kids` | `boolean`<br> Indicates that the song may be especially interesting or well-suited for kids. |
 
+```sql
+--Schema
+
+CREATE TABLE user_rating (
+  song_id INTEGER,
+  feels NUMERIC,
+  explicit NUMERIC,
+  language NUMERIC,
+  violence NUMERIC,
+  sex NUMERIC,
+  substance NUMERIC,
+  occult NUMERIC,
+  kids NUMERIC,
+  FOREIGN KEY(song_id) REFERENCES song (id) ON DELETE CASCADE
+);
 ```
-# Schema
-
-# Example record
+```
+/* Example record */
 ```
 
 
@@ -532,9 +576,9 @@ event ||
 `velocity` | `integer`<br> The MIDI velocity of the event. |
 
 ```
-# Schema
+--Schema
 
-# Example record
+/* Example record */
 ```
 
 
